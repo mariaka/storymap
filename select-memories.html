@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  </head>
+  <body>
+    <form id="track_form" action="display-map.html">
+      <div id="tracks"></div>
+      <div id="photos"></div>
+      <input type="submit">
+    </form>
+  </body>
+  <script>
+    function showTracks (tracks) {
+    	tracks.forEach(function (track) {
+    		var track_iframe = '<iframe width="50%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F' + track.id + '"></iframe>';
+    		var html = '<div><input type=checkbox name="tracks" value='+track.id+'>'+ track_iframe +'</div>';
+    		$("#tracks").append(html);
+    	});
+    }
+
+    function showPhotos (response) {
+      response.photos.items.forEach(function (photo) {
+        var photo_image = '<img src='+ photo.photoUrl +'>';
+        var html = '<div><input type=checkbox name="photos" value='+photo.id+'>'+ photo_image +'</div>';
+        $("#photos").append(html);
+      });
+    }
+
+    $.getJSON("http://api.soundcloud.com/users/annarr-1/tracks.json?client_id=hannes_test", showTracks);
+  	$.getJSON("https://www.eyeem.com/api/v2/users/1907798/photos?limit=10&client_id=03iihFhnJp6CRqNN1nL1V0cnx8eyatC0", showPhotos);
+  </script>
+</html>
