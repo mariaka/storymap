@@ -6,22 +6,58 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   </head>
   <body>
-    <div id="tracks"></div>
+    <form id="track_form">
+      <div id="tracks"></div>
+      <div id="photos"></div>
+      <input type="submit">
+    </form>
   </body>
   <script>
-    var showTracks = function (tracks) {
+    function showTracks (tracks) {
     	tracks.forEach(function (track) {
-    		var track_iframe = '<iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F' + track.id + '"></iframe>';
-    		var html = '<div><input type=checkbox value='+track.id+'>'+ track_iframe +'</div>';
+    		var track_iframe = '<iframe width="50%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F' + track.id + '"></iframe>';
+    		var html = '<div><input type=checkbox name="tracks" value='+track.id+'>'+ track_iframe +'</div>';
     		$("#tracks").append(html);
     	});
     }
-    $.getJSON("http://api.soundcloud.com/users/theophani/tracks.json?client_id=hannes_test", showTracks);
-	$.getJSON("https://www.eyeem.com/api/v2/users/1013/photos?limit=10&client_id=03iihFhnJp6CRqNN1nL1V0cnx8eyatC0", function (response) {
-		console.log(response.photos.items)
-	});
 
-	 
+    function showPhotos (response) {
+      response.photos.items.forEach(function (photo) {
+        var photo_image = '<img src='+ photo.photoUrl +'>';
+        var html = '<div><input type=checkbox name="photos" value='+photo.id+'>'+ photo_image +'</div>';
+        $("#photos").append(html);
+      });
+    }
 
+    $.getJSON("http://api.soundcloud.com/users/annarr-1/tracks.json?client_id=hannes_test", showTracks);
+  	$.getJSON("https://www.eyeem.com/api/v2/users/1907798/photos?limit=10&client_id=03iihFhnJp6CRqNN1nL1V0cnx8eyatC0", showPhotos);
+
+    function parseQueryString(search) {
+      var selections = search.replace("?", "");
+      selections = selections.split("&");
+      selections = selections.map(function (pair) {
+        parts = pair.split("=");
+        return {
+          key: parts[0],
+          value: parts[1]
+        };
+      });
+      var tracks = selections.filter(function (selection) {
+        return selection.key == "tracks";
+      }).map(function(track) {
+        return track.value;
+      });
+      var photos = selections.filter(function (selection) {
+        return selection.key == "photos";
+      }).map(function(photo) {
+        return photo.value;
+      });
+      return {
+        tracks: tracks,
+        photos: photos
+      };
+    }
+
+    var selected_values = parseQueryString(window.location.search);
   </script>
 </html>

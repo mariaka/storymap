@@ -6,29 +6,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   </head>
   <body>
-    <div >
+    
   </body>
   <script>
-    function showTracks (tracks) {
-    	tracks.forEach(function (track) {
-    		var track_iframe = '<iframe width="50%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F' + track.id + '"></iframe>';
-    		var html = '<div><input type=checkbox name="tracks" value='+track.id+'>'+ track_iframe +'</div>';
-    		$("#tracks").append(html);
-    	});
-    }
-
-    function showPhotos (response) {
-      response.photos.items.forEach(function (photo) {
-        var photo_image = '<img src='+ photo.photoUrl +'>';
-        var html = '<div><input type=checkbox name="photos" value='+photo.id+'>'+ photo_image +'</div>';
-        $("#photos").append(html);
-      });
-    }
-
-    $.getJSON("http://api.soundcloud.com/users/annarr-1/tracks.json?client_id=hannes_test", showTracks);
-  	$.getJSON("https://www.eyeem.com/api/v2/users/1907798/photos?limit=10&client_id=03iihFhnJp6CRqNN1nL1V0cnx8eyatC0", showPhotos);
-
-    function parseQueryString(search) {
+    function parseQueryString (search) {
       var selections = search.replace("?", "");
       selections = selections.split("&");
       selections = selections.map(function (pair) {
@@ -54,6 +35,50 @@
       };
     }
 
+    function extractVenue (tag_list) {
+      return track.tag_list.split(" ").map(function (tag) {
+        var parts = tag.split("=");
+        return {
+          key: parts[0],
+          value: parts[1]
+        };
+      }).filter(function (tag) {
+        return tag.key == 'foursquare:venue';
+      })[0].value;
+    }
+
     var selected_values = parseQueryString(window.location.search);
+
+    function pinTrack (track) {
+      var venue = extractVenue(track.tag_list);
+      var fs_url = "https://api.foursquare.com/v2/venues/" + venue + "?client_id=TCTFHSCYXEXROP30DGSI4KMF5QTL2LAST5R1PVAI2KQ5DP4O&client_secret=VLVNLBS2XWAFC11XFBPUQ1UEUGII1QMLAWL0S4SCZK25ZJBW";
+      $.getJSON(fs_url, function (stuff) {
+        var longitude = stuff.response.venue.location.lng;
+        var latitude = stuff.response.venue.location.lat;
+        var html = '<iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F' + track.id + '"></iframe>'
+        console.log("longitude", longitude);
+        console.log("latitude", latitude);
+        console.log("html", html);
+      });
+    }
+
+    function pinPhoto (response) {
+      var photo = response.photo;
+      var html = '<img src='+ photo.photoUrl +'>';
+      console.log("longitude", photo.longitude);
+      console.log("latitude", photo.latitude);
+      console.log("html", html);
+    }
+
+    //$.getJSON(, pinTracks);
+
+    selected_values.tracks.forEach(function (track_id) {
+      $.getJSON("http://api.soundcloud.com/tracks/" + track_id + ".json?client_id=hannes_test", pinTrack);
+    });
+
+    selected_values.photos.forEach(function (photo_id) {
+      $.getJSON("https://www.eyeem.com/api/v2/photos/" + photo_id + "?limit=10&client_id=03iihFhnJp6CRqNN1nL1V0cnx8eyatC0", pinPhoto);
+    });
+
   </script>
 </html>
