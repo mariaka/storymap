@@ -42,7 +42,7 @@
       };
     }
 
-    function extractVenue (tag_list) {
+    function extractVenue (track) {
       return track.tag_list.split(" ").map(function (tag) {
         var parts = tag.split("=");
         return {
@@ -57,7 +57,7 @@
     var selected_values = parseQueryString(window.location.search);
 
     function pinTrack (track) {
-      var venue = extractVenue(track.tag_list);
+      var venue = extractVenue(track);
       var fs_url = "https://api.foursquare.com/v2/venues/" + venue + "?client_id=TCTFHSCYXEXROP30DGSI4KMF5QTL2LAST5R1PVAI2KQ5DP4O&client_secret=VLVNLBS2XWAFC11XFBPUQ1UEUGII1QMLAWL0S4SCZK25ZJBW";
       $.getJSON(fs_url, function (stuff) {
         var longitude = stuff.response.venue.location.lng;
@@ -66,15 +66,17 @@
         console.log("longitude", longitude);
         console.log("latitude", latitude);
         console.log("html", html);
+
+        var soundMarker = 'images/marker_sound.png'
+        var myLatLng = new google.maps.LatLng(latitude, longitude);
+        var testMarker02 = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: soundMarker
+        });
       });
 
-        // var soundMarker = 'images/marker_sound.png'
-        // var myLatLng = new google.maps.LatLng(latitude, longitude);
-        // var testMarker02 = new google.maps.Marker({
-        // position: myLatLng,
-        // map: map,
-        // icon: soundMarker
-        // });
+        
     }
 
     function pinPhoto (response) {
