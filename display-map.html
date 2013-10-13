@@ -110,9 +110,12 @@
       var map;
       var berlin = new google.maps.LatLng(52.5243700, 13.4105300);
       var MY_MAPTYPE_ID = 'custom_style';
+      var directionsDisplay = new google.maps.DirectionsRenderer();
+      var directionsService = new google.maps.DirectionsService();
 
 
       function initialize() {
+         directionsDisplay = new google.maps.DirectionsRenderer();
          var styles = [
             {
                 featureType: 'water',
@@ -199,7 +202,7 @@
         };
 
         map = new google.maps.Map(document.getElementById('map_canvas'),
-            mapOptions);
+            mapOptions), directionsDisplay.setMap(map);
 
         var styledMapOptions = {
           name: 'Custom Style'
@@ -210,33 +213,112 @@
         map.mapTypes.set(MY_MAPTYPE_ID, customMapType);
 
         
+            //text memory marker
         var textMarker = 'images/marker_text.png'
         var myLatLng = new google.maps.LatLng(52.524, 13.4105300);
         var testMarker01 = new google.maps.Marker({
         position: myLatLng,
         map: map,
         icon: textMarker
+       // title: "insert title here"
+        });
+
+            //text infowindow
+        var contentStringText = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">Text Memory!</h1>'+
+        '<div id="bodyContent">'+
+        '<p><b>Text Memory</b> here is a whole bunch of stuff, or where the soundcloud widget or photo will appear.'+
+        '</div>'+
+        '</div>';
+        var infowindow1 = new google.maps.InfoWindow({
+        content: contentStringText
+        //we can enter max-width (and morestyling) here
+        });
+        google.maps.event.addListener(testMarker01, 'click', function() {
+        infowindow1.open(map,testMarker01);
         });
 
 
-        // var soundMarker = 'images/marker_sound.png'
-        // var myLatLng = new google.maps.LatLng(52.523, 13.4105300);
-        // var testMarker02 = new google.maps.Marker({
-        // position: myLatLng,
-        // map: map,
-        // icon: soundMarker
-        // });
+              //sound memory marker
+        var soundMarker = 'images/marker_sound.png'
+        var myLatLng = new google.maps.LatLng(52.523, 13.48);
+        var testMarker02 = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: soundMarker,
+        title: 'My Sound Memory'
+        });
 
-        // var photoMarker = 'images/marker_photo.png'
-        // var myLatLng = new google.maps.LatLng(52.525, 13.4105300);
-        // var testMarker03 = new google.maps.Marker({
-        // position: myLatLng,
-        // map: map,
-        // icon: photoMarker
-        // });
+              //sound infowindow
+        var contentStringSound = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">Sound Memory!</h1>'+
+        '<div id="bodyContent">'+
+        '<p><b>Sound Memory</b> here is where the soundcloud widget link needs to go'+
+        '</div>'+
+        '</div>';
+        var infowindow2 = new google.maps.InfoWindow({
+        content: contentStringSound
+        //we can enter max-width (and more) here
+        });
+        google.maps.event.addListener(testMarker02, 'click', function() {
+       infowindow2.open(map,testMarker02);
+       });
 
 
-      }
+            //photo memory marker
+        var photoMarker = 'images/marker_photo.png'
+        var myLatLng = new google.maps.LatLng(52.525, 13.43);
+        var testMarker03 = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: photoMarker,
+        //title: 'My Photo Memory'
+        });
+            //photo infowindow
+        var contentStringPhoto = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">Photo Memory!</h1>'+
+        '<div id="bodyContent">'+
+        '<p><b>Photo Memory</b> here is where the EyEm link needs to go'+
+        '</div>'+
+        '</div>';
+        var infowindow3 = new google.maps.InfoWindow({
+        content: contentStringPhoto
+                //we can enter max-width (and more) here
+        });
+        google.maps.event.addListener(testMarker03, 'click', function() {
+        infowindow3.open(map,testMarker03);
+        });
+
+        //directions display
+       function calcRoute() {;
+            var request = {
+              //starting & ending points
+                origin: new google.maps.LatLng(52.525, 13.43),
+                destination: new google.maps.LatLng(52.523, 13.48),
+              //waypoints are entered as an array. you can also create an empty array like
+              //waypoints:[] ---- at some earlier time if that is helpful 
+                waypoints: [{location: new google.maps.LatLng(52.524, 13.3905300)}],
+                optimizeWaypoints: false,
+
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+                }
+            });
+        }
+
+        calcRoute();
+
+
+      }//closing initialize
 
       google.maps.event.addDomListener(window, 'load', initialize);
   </script>
