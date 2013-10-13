@@ -5,10 +5,11 @@
     </style>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   </head>
-  <body>
-    <form id="track_form" action="display-map.html">
-      <div id="tracks"></div>
-      <div id="photos"></div>
+  <body style="background-color: lightblue">
+    <h3 style="padding-top: 5%; padding-left: 30%; font-family:'Helvetica'">Choose your memories:</h3>
+    <form id="track_form" action="display-map.html" style="margin-left: 15%">
+      <div id="tracks" style="padding-left: 15%"></div>
+      <div id="photos" style="padding-left: 15%"></div>
       <input type="submit">
     </form>
   </body>
@@ -16,7 +17,7 @@
     function showTracks (tracks) {
     	tracks.forEach(function (track) {
     		var track_iframe = '<iframe width="50%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F' + track.id + '"></iframe>';
-    		var html = '<div><input type=checkbox name="tracks" value='+track.id+'>'+ track_iframe +'</div>';
+    		var html = '<div><input type=checkbox name="tracks" style="margin-right: 15px; margin-bottom: 30px;" value='+track.id+'>'+ track_iframe +'</div>';
     		$("#tracks").append(html);
     	});
     }
@@ -24,7 +25,7 @@
     function showPhotos (response) {
       response.photos.items.forEach(function (photo) {
         var photo_image = '<img src='+ photo.photoUrl +'>';
-        var html = '<div><input type=checkbox name="photos" value='+photo.id+'>'+ photo_image +'</div>';
+        var html = '<div><input type=checkbox name="photos" style="margin-right: 15px; margin-bottom: 30px;" value='+photo.id+'>'+ photo_image +'</div>';
         $("#photos").append(html);
       });
     }
